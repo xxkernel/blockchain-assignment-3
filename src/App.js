@@ -185,6 +185,7 @@ const abi = [
 ];
 
 const App = () => {
+  const [buttonDisabled, setDisable] = useState(false);
   const [userChoice, setUserChoice] = useState('rock');
   const [computerChoice, setComputerChoice] = useState('rock');
   const [userPoints, setUserPoints] = useState(0);
@@ -272,13 +273,16 @@ const App = () => {
     if (userPoints === 2) {
       setGameOver(true);
       setResult('Congratulations! You won the game!');
+      setDisable(true);
     } else if (computerPoints === 2) {
       setGameOver(true);
       setResult('Game over! Computer won.');
+      setDisable(true);
     }
   }, [userPoints, computerPoints]);
 
   const reset = () => {
+    setDisable(false);
     setUserChoice('rock');
     setComputerChoice('rock');
     setUserPoints(0);
@@ -318,6 +322,7 @@ const App = () => {
           <button
             key={choice}
             onClick={() => handleClick(choice)}
+            disabled={buttonDisabled}
           >
             {choice.charAt(0).toUpperCase() + choice.slice(1)}
           </button>
