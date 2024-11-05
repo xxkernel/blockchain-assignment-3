@@ -1,0 +1,51 @@
+.App {
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+.heading {
+  font-size: 2em;
+  margin-top: 20px;
+}
+
+.score {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px;
+}
+
+.choice {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+}
+
+.user-hand,
+.computer-hand {
+  width: 100px;
+  height: 100px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 1em;
+  cursor: pointer;
+}
+
+.result {
+  margin-top: 20px;
+}
+
+.reset {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 1em;
+  cursor: pointer;
+}
