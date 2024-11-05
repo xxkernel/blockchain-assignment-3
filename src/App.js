@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import Web3 from 'web3';
 import './App.css';
 
+import bgImage from './images/bg1.jpg';
 const abi = [
   {
     inputs: [],
@@ -293,7 +294,12 @@ const App = () => {
   };
 
   return (
-    <div className="App">
+    <div
+      className="App"
+      style={{
+        backgroundImage: `url(${bgImage})`,
+      }}
+    >
       <h1 className="heading">Rock-Paper-Scissors</h1>
       <div className="score">
         <h1>User Points: {userPoints}</h1>
