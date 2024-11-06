@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import Web3 from 'web3';
 import './App.css';
 
-import bgImage from './images/bg1.jpg';
 const abi = [
   {
     inputs: [],
@@ -197,8 +196,17 @@ const App = () => {
   const [web3, setWeb3] = useState(null);
   const [contract, setContract] = useState(null);
   const [account, setAccount] = useState(null);
-  const choices = ['rock', 'paper', 'scissors'];
+  const [gameHistory, setGameHistory] = useState([]);
+  const [gameResults, setGameResults] = useState(() => {
+    // Загружаем результаты из localStorage при первой загрузке
+    const savedResults = localStorage.getItem('gameResults');
+    return savedResults ? JSON.parse(savedResults) : [];
+  });
 
+  const choices = ['rock', 'paper', 'scissors'];
+  useEffect(() => {
+    localStorage.setItem('gameResults', JSON.stringify(gameResults));
+  }, [gameResults]);
   useEffect(() => {
     const init = async () => {
       const web3Instance = new Web3(window.ethereum);
@@ -261,15 +269,26 @@ const App = () => {
       setComputerPoints((prev) => prev + 1);
     }
 
+    const newHistory = {
+      userChoice: choices[playerChoice],
+      computerChoice: choices[dealerChoiceValue],
+      result: turnResult,
+    };
+    setGameHistory((prevHistory) => [...prevHistory, newHistory]);
+
     if (userPoints + computerPoints === 3) {
       setGameOver(true);
-      setResult(
-        userPoints === 2
-          ? 'Congratulations! You won the game!'
-          : 'Game over! Computer won.'
-      );
+      const gameResult =
+        userPoints === 2 ? 'You won the game!' : 'Computer won the game!';
+      setResult(gameResult);
+
+      // Сохраняем результаты игры в общий массив gameResults и в localStorage
+      const updatedResults = [...gameResults, gameResult];
+      setGameResults(updatedResults);
+      localStorage.setItem('gameResults', JSON.stringify(updatedResults));
     }
   };
+
   useEffect(() => {
     if (userPoints === 2) {
       setGameOver(true);
@@ -291,15 +310,23 @@ const App = () => {
     setTurnResult(null);
     setResult("Let's see who wins");
     setGameOver(false);
+    setGameHistory([]); // Очищаем историю раундов при сбросе
   };
 
+  // Проверка на победителя
+  useEffect(() => {
+    if (userPoints >= 2 || computerPoints >= 2) {
+      const winner = userPoints >= 2 ? 'User' : 'Computer';
+      setResult(`${winner} wins the game!`);
+      setGameOver(true);
+
+      // Добавляем результат завершенной игры в gameResults
+      setGameResults((prevResults) => [...prevResults, winner]);
+    }
+  }, [userPoints, computerPoints]);
+
   return (
-    <div
-      className="App"
-      style={{
-        backgroundImage: `url(${bgImage})`,
-      }}
-    >
+    <div className="App">
       <h1 className="heading">Rock-Paper-Scissors</h1>
       <div className="score">
         <h1>User Points: {userPoints}</h1>
@@ -348,6 +375,25 @@ const App = () => {
           Reset Game
         </button>
       )}
+
+      <div className="history">
+        <h2>Round History</h2>
+        {gameHistory.map((round, index) => (
+          <p key={index}>
+            {index + 1}: You chose {round.userChoice}, Computer chose{' '}
+            {round.computerChoice} - {round.result}
+          </p>
+        ))}
+      </div>
+
+      <div className="history">
+        <h2>Game Results</h2>
+        {gameResults.map((result, index) => (
+          <p key={index}>
+            {index + 1}: {result}
+          </p>
+        ))}
+      </div>
     </div>
   );
 };
